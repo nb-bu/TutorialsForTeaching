@@ -1,7 +1,7 @@
 ---
 title: "Bayesian Cognitive Modeling"
 subtitle: "Tutorial"
-author: "Linus Hof, Nuno Busch"
+author: "Linus Hof & Nuno Busch"
 date: "`r Sys.time()`"
 format: 
   html:
@@ -31,11 +31,11 @@ here::i_am("tutorials/BayesianCognitiveModeling/bayesian_cognitive_modeling.Rmd"
 
 ## Risky Choice
 
-Sometimes in your life, you make choices between certain outcomes (e.g., what to eat from your fridge). In other situations, you have to make risky choices:
+Sometimes in your life, you make choices between certain outcomes (e.g., whether to buy an Android phone or an iPhone). In other situations, you have to make risky choices:
 When making decisions under risk, choosing an option does not always lead to the same outcome.
-Instead, choosing an option can lead to one of several outcomes with some probability. A classical example would be playing a lottery, another real life example would be deciding to buy insurance or not (where the future event of getting a disease is not for sure but may only happen with some predicted probability).
+Instead, choosing an option can lead to one of several outcomes with some probability. A classical example would be playing a lottery or to invest in the stock market, another real life example would be deciding to buy insurance or not (where the future event of getting a disease is not for sure but may only happen with some predicted probability).
 
-In our studies, we often investigate people's choice behavior between lotteries ("risky prospects").
+In our studies, we often investigate people's choice behavior in a controlled context. For this, we present them with different lotteries ("risky prospects") and ask which one they prefer.
 Consider the following risky choice problem from a study of [Kellen et al. (2016)](https://linkinghub.elsevier.com/retrieve/pii/S0010027716302104), involving two options, $A$ and $B$. 
 The different columns represent different features of both options.
 
@@ -85,8 +85,8 @@ kable(problems[1,])
 
 For instance, `Option B` has two possible outcomes, indicated by `outcomeB1` and `outcomeB2`. 
 When choosing this option, one of the outcomes is obtained.
-Specifically, `outcomeB1`=`r problems[[1,'outcomeB1']]` occurs with `probB1``r problems[[1,'probB1']]` and `outcomeB2`=`r problems[[1,'outcomeB2']]` occurs with `probB2=``r problems[[1,'probB2']]`. 
-When choosing this option repeatedly, one therefore expects to obtain `4` most of the time, but sometimes also a `0`.
+Specifically, `outcomeB1`=`r problems[[1,'outcomeB1']]` occurs with `probB1`=`r problems[[1,'probB1']]` and `outcomeB2`=`r problems[[1,'outcomeB2']]` occurs with `probB2`=`r problems[[1,'probB2']]`. 
+When choosing this option repeatedly, we therefore expect to obtain `4` most of the time, but sometimes also a `0`.
 To illustrate, we simulate choosing `Option B` 100 times. 
 
 ```{r}
@@ -97,10 +97,12 @@ sample(c(problems[[1,'outcomeB1']], problems[[1,'outcomeB2']]) ,
 ```
 
 Turning to `Option A`, we notice that `outcomeA1`=`r problems[[1,'outcomeA1']]` occurs with `probA1`=`r problems[[1,'probA1']]` and `outcomeA2`=`r problems[[1,'outcomeA2']]` occurs with `probA2`=`r problems[[1,'probA2']]`.
-Thus, this option is effectively a safe option, where `outcomeA2` does not really exist and we instead always obtain a `3`.
+Thus, this option is effectively a safe option, where `outcomeA2` does not really exist and we instead always obtain a `3`. 
+(Note that we still need to keep the (in reality non-existent) outcome A2 in our dataframe for modeling purposes. We will get to that later.). 
+
 To illustrate, we also simulate choosing `Option A` 100 times. 
 
-(Note) that we still need to keep the (in reality non-existent) outcome A2 in our dataframe for modeling purposes. We will get to that later.)
+
 
 ```{r}
 sample(c(problems[[1,'outcomeA1']], problems[[1,'outcomeA2']]) , 
@@ -109,10 +111,10 @@ sample(c(problems[[1,'outcomeA1']], problems[[1,'outcomeA2']]) ,
        prob=c(problems[[1,'probA1']], problems[[1,'probA2']]))
 ```
 
-In a typical risky choice study, people are presented with the possible outcomes and probabilities of both options and need to decide which of the options they prefer (decisions from description). 
+In a typical risky choice study, people are presented with the possible outcomes and probabilities of both options and need to decide which of the options they prefer (so-called *decisions from description*). 
 However, most studies involve more than just one choice problem. 
 For instance, in the study by Kellen et al. (2016), participants were presented with `r nrow(problems)` different choice problems, each represented by a row in the table below. 
-Each problem is a unique combinations of the outcomes and probabilities for `Option A` and `Option B`.
+Each problem is a unique combination of the outcomes and probabilities for `Option A` and `Option B`.
 
 The column `domain` indicates whether all possible outcomes are $\geq 0$ (`Gain`), or whether all outcome are $\leq 0$ (`Loss`), or whether the problem involves some outcomes that are $>0$ and some that are a $<0$ - i.e., a problem featuring a gamble that could lead to either a gain, or a loss. 
 
@@ -125,7 +127,7 @@ kable(problems)
 
 What do you think, how do people choose between such lotteries? They are probably trying to maximize rewards (gain the highest outcome values and avoid losing any) on the long run, right?
 
-This assumption is reflected in an influential theory: According to this view, the rational way to make such decisions under risk is to choose the option with the highest expected value (EV), i.e., 
+This assumption is reflected in an influential theory: According to this view, the rational way to make such decisions under risk is to choose the option with the highest *expected value* (EV), i.e., 
 
 $$
 \arg\max  EV = \sum_i^np_ix_i \; ,
@@ -149,9 +151,9 @@ problems %<>%
 kable(head(problems))
 ```
 
-One of the shortcomings of the idea of EV maximization is that people do not seem maximize expected values in real life. 
-Kellen et al. (2016) collected the choices of `r ncol(description)-1` participants on all of the `r nrow(description)` choice problems from above.
-To illustrate, the following table shows the choices of 10 participants (columns) on the first 10 choice problems (rows). 
+One of the shortcomings of the idea of EV maximization is that people do not seem to maximize expected values in real life. 
+In their study, Kellen et al. (2016) collected the choices of `r ncol(description)-1` participants on all of the `r nrow(description)` choice problems from above.
+To illustrate, the following table shows the choices of 10 participants (columns) on the first 10 choice problems (rows). Here, values of 0 refer to a choice of `Option A`, and values of 1 mean that `Option B` was chosen. 
 
 
 ```{r}
@@ -175,7 +177,7 @@ description  %<>% rename(label = ...1)
 kable(description[1:10, 1:11])
 ```
 
-Since we know for all problems whether `Option A` (`1`) or `Option B` (`0`) has the higher EV, we can compute the proportion of choices, in which participants chose the option with the higher EV. 
+Since we know for all problems whether `Option A` (`0`) or `Option B` (`1`) has the higher EV, we can compute the proportion of choices, in which participants chose the option with the higher EV. 
 
 The last column of each row, `ev_max_ob`, shows the proportion of people which choose the option with the higher EV in the respective problem.
 It is easy to see that people often deviate from strict EV maximization, sometimes very systematically.
@@ -504,7 +506,7 @@ Before demonstrating how we can compute these posteriors for our CPT model using
 
 ### Prior
 
-The prior probability, $p(\Theta)$ expresses our initial beliefs about the plausibility of different parameter values. For example, before testing if a coin (or dice) is biased, you would probably have a prior belief that the coin has a .50 probability of landing on each side (1/6 = .17 for each side of the classical dice). Additionally, you will probably find it unlikely that any side has a probability of >.90 of landing on it, even if the coin or dice is biased (that would defy the law of physics if coin landed on heads if you let it fall to the ground with heads up from a height of 10 cm). 
+The prior probability, $p(\Theta)$ expresses our initial beliefs about the plausibility of different parameter values. For example, before testing if a coin (or dice) is biased, you would probably have a prior belief that the coin has a .50 probability of landing on each side (or a 1/6 = .17 probability for each side of the classical dice). Additionally, you will probably find it unlikely that any side has a probability of >.90 of landing on it, even if the coin or dice is biased (that would defy the law of physics if coin landed on heads if you let it fall to the ground with heads up from a height of 10 cm). 
 The main function of the prior is to indicate which parameter values could be obtained in principle (the possible range of values), and how plausible the values on this range are relatively to each other.
 In other words, the prior is a probability distribution over parameter values. 
 <!--maybe we can get more detailed here, e.g., provide an example-->
@@ -557,14 +559,15 @@ We can easily see that the observed choices on Problem 1 are much more likely gi
 #### Likelihood for CPT
 
 Although CPT is a more complex model than the simple binomial from above, the idea is exactly the same. 
-We have a number of free (unknown) parameters that we want to learn about ($\theta$ for the binomial; $\alpha, \lambda,\gamma,\delta$ for CPT) and the probability of observed choices depends on the values of these parameters.
-The main difference between the binomial and CPT is that the binomial simply assumes a constant probability for choosing `Option 1` vs. `Option 2` for all choice problems (that is $\theta$), whereas CPT uses (transformations of) the outcomes and their probabilities in a choice problem to compute a choice probability that is specific for this problem. 
-However, since CPT can only make deterministic predictions so far (e.g., always choose `Option A` when $V_A > V_B$), we need to make one more adjustment to CPT so that it can provide us with probabilities that can also be different from 0 and 1.
+We have a number of free (unknown) parameters that we want to learn about ($\theta$ for the binomial; $\alpha, \lambda,\gamma,\delta$ for CPT as outlined above) and the probability of observed choices depends on the values of these parameters.
+The main difference between the binomial and CPT is that the binomial simply assumes a constant probability for choosing `Option 1` vs. `Option 2` for all choice problems (that is $\theta$), independent of characteristics of the choice problems, whereas CPT uses (transformations of) the outcomes and their probabilities in a choice problem to compute a choice probability that is specific for this problem. 
+So far, CPT can only make deterministic predictions (e.g., always choose `Option A` when $V_A > V_B$). Assuming a probabilistic world, where people mostly choose according to their overall preference, but may sometimes also act differently depending on context (e.g., peer pressure or other factors), we need to make one more adjustment to CPT to make it probabilistic instead of deterministic. Doing so, CPT will be able to provide us with probabilities that can also be different from 0 and 1.
 
-In this adjustment, we use a choice rule, which predicts a higher probability for choosing `Option A`, the better its CPT score ($V_A$) is compared to the score for `Option B`. 
-That is, in contrast to the deterministic version, the prediction does not only depend on whether `Option A` obtains a better evaluation than `Option B`, but also on how much better this evaluation is. 
+
+In this adjustment, we use a choice rule, which predicts a higher probability for choosing an option the higher the difference between the two option's valuations is (e.g., higher probability for choosing `Option A` the better its CPT score $V_A$ is compared to the score for `Option B`). 
+That is, in contrast to the deterministic version, the prediction does not only depend on *if* `Option A` obtains a better evaluation than `Option B` (or a worse one), but also on *how much* better (or *how much* worse) this evaluation is. 
 If the evaluation is much better, it is highly likely that `Option A` is chosen, if it is much worse, it is instead highly likely that `Option B` is chosen. 
-If their evaluations are similar, the choice probability gets closer to $.5$.
+If their evaluations are similar, the choice probability gets closer to $.5$, indicating that a person might be indifferent between the two choice options.
 This logic is implemented in the so called logit choice rule, which takes the CPT valuations as input and returns a choice probability as output: 
 $$
 p(A) = \frac{1}{1+e^{-\phi(V_A-V_B)}} \: , 
@@ -574,8 +577,8 @@ where $\phi$ is a number that can take values $\geq0$ (free parameter).
 The figure below illustrates how the logit choice rule translates differences in the CPT valuations (x-axis) into a choice probability that is constrained between 0 and 1 (y-axis).
 In general, when difference in valuations is 0, the choice probability is .5. 
 Intuitively, when the options do not really differ, we also have no preference for one option or the other. 
-Then, when the difference in valuations becomes positive, the probability for choosing `Option A` increases; and when they become negative, the probability for choosing `Option A` decreases.
-As can be seen, $\phi$ affects how strongly the probability depends on the differences. 
+Then, when the difference in valuations becomes positive, the probability for choosing `Option A` *increases*; and when they become negative, the probability for choosing `Option A` *decreases*.
+As can be seen, $\phi$ affects how strongly the choice probability is influenced by the difference magnitude between the option's valuations. 
 
 ```{r}
 logit <- expand_grid(Diff = c(seq(-4, 4, .01)) , 
@@ -787,4 +790,135 @@ kable(m.summary, digits = 4)
 ```
 
 
+```{r}
+#| echo: false
+
+s
+## Description
+
+setwd(paste(pathname, "/project_data",sep=""))
+
+# import choice data
+desc_choices_kellen2016 <- openxlsx::read.xlsx(here("tutorials", "BayesianCognitiveModeling", "kellen2016.xlsx"), sheet = "Choices_description")  %>% dplyr::rename(label = 1)
+choices_long = desc_choices_kellen2016 %>% 
+  gather(key = "code", value = "choice_num", -label) # gather choice data
+
+
+# read in gambles
+gambles.all <- openxlsx::read.xlsx(here("tutorials", "BayesianCognitiveModeling", "kellen2016.xlsx"),sheet = "Lottery_problems") %>% 
+  dplyr::rename(probA3 = 7, outcomeA3 = 8, probB3 = 13, outcomeB3 = 14 # add missing variable names for third outcomes
+         , ProblemID = problem) # rename problem variables
+gambles.all[is.na(gambles.all)==T] <- 0
+gambles = gambles.all %>% select(ProblemID, label,
+                                 outcomeA1, probA1, outcomeA2, probA2, #outcomeA3, probA3, # remove dummy outcome 3 - because we add one again for all datasets later
+                                 outcomeB1, probB1, outcomeB2, probB2, #outcomeB3, probB3
+                                 ) # need to order it with outcome first, for ordering by size command
+
+desc_kellen2016 = merge(gambles, choices_long, by = "label") 
+
+
+# Cprepare data for formatting loop -> renaming variables
+desc_kellen2016 <- desc_kellen2016  %>% select(!label) %>% dplyr::rename(A1o = outcomeA1, A1p = probA1,
+                                                                         A2o = outcomeA2, A2p = probA2,
+                                                                         B1o = outcomeB1, B1p = probB1,
+                                                                         B2o = outcomeB2, B2p = probB2) # rename variables
+
+
+## Experience
+
+# read in choices
+exp_choices_kellen2016 <- openxlsx::read.xlsx(here("tutorials", "BayesianCognitiveModeling", "kellen2016.xlsx"), sheet = "Choices_experience_neu") %>% dplyr::rename(ProblemID = 1)
+choices_long = exp_choices_kellen2016 %>% 
+  gather(key = "ParticipantCode", value = "choice_num", -ProblemID) # gather choice data
+
+# read in gambles
+gambles.all_probsexp <- openxlsx::read.xlsx("kellen2016.xlsx", sheet = "Lottery_problems_experienced") %>% # individually experienced probabilities from samples
+  dplyr::rename(probA3 = 8, outcomeA3 = 9, probB3 = 14, outcomeB3 = 15) # add missing variable names for third outcomes
+gambles.all_probsexp[is.na(gambles.all_probsexp)==T] <- 0
+
+gambles = gambles.all_probsexp %>% 
+  select(ProblemID, ProblemName, ParticipantCode,
+                                 outcomeA1, probA1, outcomeA2, probA2, #outcomeA3, probA3, # remove dummy outcome 3
+                                 outcomeB1, probB1, outcomeB2, probB2, #outcomeB3, probB3
+                                 ) # need to order it with outcome first, for ordering by size command
+
+exp_kellen2016 = merge(gambles, choices_long, by = c("ParticipantCode", "ProblemID")) 
+exp_kellen2016 = exp_kellen2016 %>% 
+  select(!ProblemID) %>%
+  dplyr::select(code = ParticipantCode, 
+                A1o = outcomeA1, A1p = probA1,
+                A2o = outcomeA2, A2p = probA2,
+                B1o = outcomeB1, B1p = probB1,
+                B2o = outcomeB2, B2p = probB2,
+                choice_num,
+                ProblemID = ProblemName)   %>%
+  arrange(code, ProblemID)
+
+# read in sampling info
+samples_kellen<- openxlsx::read.xlsx("kellen2016.xlsx", sheet = "Sampling_experience") #%>% # individually experienced probabilities from samples
+ # dplyr::rename(probA3 = 8, outcomeA3 = 9, probB3 = 14, outcomeB3 = 15) # add missing variable names for third outcomes
+# gambles.all_probsexp[is.na(gambles.all_probsexp)==T] <- 0
+
+
+
+# calculate experienced probabilities
+samples_kellen<- samples_kellen %>%
+  
+  mutate(
+    choice_num = case_when(
+      response == "A" ~ 1,
+      response == "B" ~ 0,  # new variable with only numerical choice
+      TRUE ~ NA)  ,
+
+    sampled_option = case_when(
+      SampVal == "A1" | SampVal == "A2" ~ "A",
+      SampVal == "B1" | SampVal == "B2" ~ "B",
+      TRUE ~ NA) ,# new variable with sampled option
+    
+    NSA = case_when(
+      SampVal == "A1" | SampVal == "A2" ~ 1,
+      SampVal == "B1" | SampVal == "B2" ~ 0,
+      TRUE ~ NA) ,# new variable with sampled option A count
+    
+    NSB = case_when(
+      SampVal == "A1" | SampVal == "A2" ~ 0,
+      SampVal == "B1" | SampVal == "B2" ~ 1,
+      TRUE ~ NA) ,# new variable with sampled option B count
+        
+    probA1_exp = case_when(
+      SampVal == "A1"  ~ 1,
+      SampVal == "A2"  ~ 0,
+      TRUE ~ NA) , # new variable with probability of outcome A1
+    
+    probB1_exp = case_when(
+      SampVal == "B1"  ~ 1,
+      SampVal == "B2"  ~ 0,
+      TRUE ~ NA) # new variable with probability of outcome B1
+  )
+samples_kellen <- samples_kellen %>%
+  dplyr::group_by(ParticipantCode, ProblemID, ProblemName) %>%
+  dplyr::summarise(
+    outcomeA1 = mean(outcomeA1, na.rm = TRUE), # retain gamble descriptions (ground truth outcomes and probs)
+    probA1 = mean(probA1, na.rm = TRUE),
+    outcomeA2 = mean(outcomeA2, na.rm = TRUE),
+    probA2 = mean(probA2, na.rm = TRUE),
+    outcomeB1 = mean(outcomeB1, na.rm = TRUE),
+    probB1 = mean(probB1, na.rm = TRUE),
+    outcomeB2 = mean(outcomeB2, na.rm = TRUE),
+    probB2 = mean(probB2, na.rm = TRUE),
+    choice_num = mean(choice_num, na.rm = TRUE),
+    NSA = sum(NSA, na.rm = TRUE), # sum up sampled outcomes
+    NSB = sum(NSB, na.rm = TRUE),
+    probA1_exp = mean(probA1_exp, na.rm = TRUE), # average actual experienced probabilities of outcomes
+    probB1_exp = mean(probB1_exp, na.rm = TRUE)
+  ) %>%
+  mutate(probA2_exp = 1-probA1_exp, # get experienced probability of contrasting outcome for each option
+         probB2_exp = 1-probB1_exp,
+         samples = NSA + NSB)       # get total number of samples per trial
+
+samples_kellen = samples_kellen %>% mutate(experiment = studies[s]) %>% select(experiment, code = ParticipantCode, ProblemID, samples)
+samples_drawn = rbind(samples_drawn, samples_kellen)
+
+
+```
 
