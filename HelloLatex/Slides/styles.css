@@ -1,0 +1,60 @@
+.gdbar img {
+  width: 200px !important;
+  height: 60px !important;
+}
+
+.gdbar {
+  color: white !important;
+  background: white !important;
+  background-size: 200px 54px;
+  position: absolute !important;
+  left: 875px !important;
+  top: 17px !important;
+}
+
+slides > slide:not(.nobackground):before {
+  width: 200px;
+  height: 54px;
+  background-size: 200px 54px;
+  position: absolute !important;
+  left: 875px !important;
+  top: 25px !important;
+}
+
+body {
+  background: white;
+  background-color: black;
+}
+
+slides > slide {
+  background: black !important;
+  background-color: white !important;
+  color: #151515 !important;
+}
+
+slides > slide.title-slide hgroup p {
+  color: #151515 !important;
+}
+
+h1, h2, h3 {
+  color: #490092 !important;
+}
+
+slides > slide.dark {
+  background: #340068 !important;
+}
+
+slides > slide.dark hgroup h2 {
+  color: white !important;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+#refs {
+	font-size: 12px;
+  margin: 5px;
+}
+
+ol { list-style-type: lower-alpha; }
