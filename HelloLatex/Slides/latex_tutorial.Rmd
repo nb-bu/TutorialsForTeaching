@@ -1,0 +1,144 @@
+---
+title: "LaTeX Tutorial"
+author: "[Cognitive and Behavioral Decision Research (CBDR)](https://cbdr-lab.net)"
+date: "October 24, 2022 (last updated September 2024)"
+output:
+  ioslides_presentation:
+    self_contained: no
+    controls: yes
+    logo: uzh_logo_e_pos.png
+    css: styles.css
+    widescreen: yes
+    smaller: no
+    fig_width: 6
+    fig_height: 4
+  beamer_presentation: default
+  slidy_presentation: default
+---
+
+<!---invisible comment: use F11 to go full-screen in Chrome--->
+# First things first
+
+## How to pronounce LaTeX
+<br><br><br><br>
+
+LaTeX is usually pronounced ***lah-tech*** or ***lay-tech*** (with *tech* sounding like *tech*nology)
+
+## What is LaTeX?
+
+* Typesetting system commonly used for scientific writing
+* Unlike word processors such as Microsoft Word (which produces binary files), LaTeX uses a **plain text** approach
+* Users write their document content and formatting commands in a single file, which LaTeX converts into a PDF file
+
+# Why LaTeX?
+
+## Advantages
+
+* **Separates content from design**. LaTeX formats all your text for you with commands that you use => No more nervous breakdowns trying to layout your Word document
+* Easy **integration with Zotero** => No more error-prone manual in-text citations
+* **Invisible comment**s in the .tex file that aren't rendered in the .pdf => Leave yourself comments without disrupting the reading flow
+* Suitable for **version control** with Git (whereas binary files like Word documents are not) => View exactly what you changed without having to save a separate new version of the document (see changes made in `example_word_doc.docx` vs. `latex_ms_template_apa7.tex`)
+* **Free and works on all operating systems** => No matter if you use Mac OS, Windows, or Linux: You can open .tex files in any text editor without compatibility issues
+
+## Disadvantages
+
+* Initially harder to use than Word -> Requires some time and commitment to get used to
+* Raw .tex file not as pretty as Word document -> No immediate preview of how the .tex file will be rendered
+* Tables are a bit of a nightmare...
+
+# Basic setup
+
+## Basic structure of a .tex file
+
+Preamble
+
+* Define type of document you want to create (article, book)
+* Load packages for things like including figures or formatting tables (analogous to R)
+
+Document environment
+
+* Delimit the beginning and end of your document
+
+Content
+
+* The text you write divided into sections (includes figures and tables)
+
+Commands
+
+* Throughout the document, commands (starting with `\`) tell LaTeX how to format the document
+
+## Level I. Use Overleaf
+
+Simply go to [Overleaf](https://www.overleaf.com/) and start using templates to write and compile your text.
+
+To avoid manual references/bibliography, install:
+
+- [Zotero](https://www.zotero.org/download/) 
+- [Better BibTeX]( https://retorque.re/zotero-better-bibtex/installation/) extension. Better BibTeX automatically updates your library export when you make additions to your library.
+
+When exporting a library from Zotero: 
+
+- Export collection
+- Format: Better BibLaTeX
+- [x] Keep updated
+- [x] Background export
+
+Overleaf allows library integration.
+
+## Level II: LaTeX on your computer
+
+If you plan on using LaTeX more extensively, consider setting it up locally on your computer:
+
+- Install a [TeX distribution](https://www.latex-project.org/get/#tex-distributions)
+- Install a LaTeX editor. Sadly, [Atom](https://atom.io/) was archived. [Visual Studio Code](https://code.visualstudio.com/Download) is a good alternative.
+
+<!-- Recommended: Install [Atom](https://atom.io/), or use an editor of your choice -->
+
+When using VS Code, the following extensions are useful (among others): 
+
+- LaTeX Workshop: For typesetting and compiling PDFs
+- LaTeX Utilities: Provides accurate word count
+- GitLens: For handling anything git-related within VS Code
+- Code Spell Checker: Basic spell checker
+
+<!-- - [latex](https://atom.io/packages/latex): To compile LaTeX documents from within Atom -->
+<!-- - [language-latex](https://atom.io/packages/language-latex): Syntax highlighting for LaTeX -->
+<!-- - [highlight-bad-chars](https://atom.io/packages/highlight-bad-chars): Highlights characters that could be causing issues in your source code (e.g., when copy-pasting quotation marks from another text) -->
+
+## Level III: Start using Git
+
+To keep your files tidy and updated (without having to save them as FINAL_VERSION_V9), make the most of LaTeX by integrating it with Git.
+
+- Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for version tracking
+- Install a Git client for easier use: e.g., [Sourcetree](https://www.sourcetreeapp.com/)
+- Or use Git from your terminal
+
+<br /><br /><br /><br />
+
+For more information on Git, see this [datacamp](https://www.datacamp.com/tutorial/github-and-git-tutorial-for-beginners) or [W3Schools](https://www.w3schools.com/git/git_intro.asp?remote=github) tutorial.
+
+
+
+# Let's get started
+
+## Example .tex file
+
+Head to [Overleaf](https://www.overleaf.com/) and open one of the [University of Zurich](https://www.overleaf.com/edu/uzh#templates) templates, or copy and paste the contents of `latex_ms_template_apa7.tex` inside the 'Manuscript Template' folder into a blank project.
+
+Or you can already try rendering the .tex file in your local text editor (e.g., Visual Studio Code).
+
+To add more citations, check out the `example.bib` file and integrate some references in the text.
+
+* In-text citations: `\textcite{article_citation_key}`
+* Parenthetical citations: `\parencite{article_citation_key}`
+
+See `biblatex-cheatsheet.pdf` for support on how to reference publications in a .tex file.
+
+
+## Where to learn more about LaTeX
+
+* [Overleaf](https://www.overleaf.com/learn) has great documentation
+
+
+
+
