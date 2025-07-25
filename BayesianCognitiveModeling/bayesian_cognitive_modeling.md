@@ -2,7 +2,7 @@ Bayesian Cognitive Modeling Tutorial
 ================
 Linus Hof & Nuno Busch
 
-Last updated: 2025-05-15
+Last updated: 2025-07-25
 
 ## Part I: Risky Choice and its Models
 
@@ -23,7 +23,7 @@ controlled context. For this, we present them with different lotteries
 (“risky prospects”) and ask which one they prefer. Consider the
 following risky choice problem from a study of [Kellen et
 al. (2016)](https://linkinghub.elsevier.com/retrieve/pii/S0010027716302104),
-involving two options, $`A`$ and $`B`$. The different columns represent
+involving two options, $A$ and $B$. The different columns represent
 different features of both options.
 
 ``` r
@@ -96,11 +96,11 @@ presented with 114 different choice problems, each represented by a row
 in the table below. Each problem is a unique combination of the outcomes
 and probabilities for `Option A` and `Option B`.
 
-The column `domain` indicates whether all possible outcomes are
-$`\geq 0`$ (`Gain`), or whether all outcome are $`\leq 0`$ (`Loss`), or
-whether the problem involves some outcomes that are $`>0`$ and some that
-are a $`<0`$ - i.e., a problem featuring a gamble that could lead to
-either a gain, or a loss.
+The column `domain` indicates whether all possible outcomes are $\geq 0$
+(`Gain`), or whether all outcome are $\leq 0$ (`Loss`), or whether the
+problem involves some outcomes that are $>0$ and some that are a $<0$ -
+i.e., a problem featuring a gamble that could lead to either a gain, or
+a loss.
 
 ``` r
 kable(problems)
@@ -233,11 +233,9 @@ This assumption is reflected in an influential theory: According to this
 view, the rational way to make such decisions under risk is to choose
 the option with the highest *expected value* (EV), i.e.,
 
-``` math
-
+$$
 \arg\max  EV = \sum_i^np_ix_i \; ,
-```
-where $`x_i`$ are the possible outcome of the option and $`p_i`$ are
+$$ where $x_i$ are the possible outcome of the option and $p_i$ are
 their respective probabilities. That is, for each option, people should
 first multiple all outcomes by their probabilities and then sum up the
 products to obtain the EV. Then they should choose the option with the
@@ -482,50 +480,45 @@ utility of an option is determined by summing up the subjective utility
 of each outcome weighted by its decision weight.
 
 Mathematically, these assumptions are expressed by replacing the outcome
-values $`x_i`$ with subjective values (subjective utilities) $`v(x_i)`$
-and replacing the probabilities with subjective decision weight
-$`\pi_i`$.
+values $x_i$ with subjective values (subjective utilities) $v(x_i)$ and
+replacing the probabilities with subjective decision weight $\pi_i$.
 
-``` math
-
+$$
 \arg\max_x V = \sum_i^n v(x_i) \pi_i \; ,
-```
+$$
 
-where $`v(.)`$ is a so-called value function that creates subjective
-utilities by distorting objective outcome values. $`\pi_i`$ on the other
+where $v(.)$ is a so-called value function that creates subjective
+utilities by distorting objective outcome values. $\pi_i$ on the other
 hand is obtained by transforming the objective probabilities into
-decision weights with a probability weighting function $`w(.)`$.
+decision weights with a probability weighting function $w(.)$.
 
 Next, we consider the value and the probability weighting function in
 more detail.
 
 #### Value function
 
-The value function takes each objective outcome $`x_i`$ as input and
-returns a respective subjective value $`v(x_i)`$ as output, according
-to:
+The value function takes each objective outcome $x_i$ as input and
+returns a respective subjective value $v(x_i)$ as output, according to:
 
-``` math
-
+$$
 v(x_i) = \begin{cases} 
 x_i^\alpha & x_i \geq 0 \; ,\\
 -\lambda |x_i|^\alpha & x_i <0 \
 \end{cases}
-```
-where $`\alpha`$ is a number that usually takes values between $`0`$ and
-$`1`$, and $`\lambda`$ is a number typically $`>0`$. Both $`\alpha`$ and
-$`\lambda`$ are called *free parameters* because they can take varying
+$$ where $\alpha$ is a number that usually takes values between $0$ and
+$1$, and $\lambda$ is a number typically $>0$. Both $\alpha$ and
+$\lambda$ are called *free parameters* because they can take varying
 values which can be estimated: For example, given choice data from a
 certain participant, we can estimate what parameters fit best to their
 value function to best explain the why they chose what they chose (we’ll
 get to that later).
 
-$`\alpha`$ controls the curvature of the value function (the diminishing
-marginal utility), $`\lambda`$ controls the steepness of the value
+$\alpha$ controls the curvature of the value function (the diminishing
+marginal utility), $\lambda$ controls the steepness of the value
 function in the loss domain relative to the gain domain (loss aversion).
 The figure below illustrates the form of this value transformation when
-$`\lambda = 1.2`$, for different values of alpha: $`\alpha = 1`$,
-$`\alpha = .9`$, $`\alpha = .8`$.
+$\lambda = 1.2$, for different values of alpha: $\alpha = 1$,
+$\alpha = .9$, $\alpha = .8$.
 
 ``` r
 vf <- expand_grid(outcome = c(seq(-10, 10, .1)) , 
@@ -545,34 +538,31 @@ vf %>% ggplot(aes(outcome, v, group = as.factor(alpha), color=as.factor(alpha)))
 
 ![](bayesian_cognitive_modeling_files/figure-gfm/value-function-demo-1.png)<!-- -->
 
-It can be seen that in the case of $`\alpha = 1`$ (blue line), all
-subjective values $`v(x)`$ are equal the objective outcomes $`x`$
-(except for $`x_i < 0`$: because of $`\lambda > 1`$. The smaller
-$`\alpha`$ gets, the more curved (concave) is the line, indicating that
-the same change in objective outcomes (on the x-axis) leads to a smaller
-change in the subjective values (on the y-axis), the more extreme (more
+It can be seen that in the case of $\alpha = 1$ (blue line), all
+subjective values $v(x)$ are equal the objective outcomes $x$ (except
+for $x_i < 0$: because of $\lambda > 1$. The smaller $\alpha$ gets, the
+more curved (concave) is the line, indicating that the same change in
+objective outcomes (on the x-axis) leads to a smaller change in the
+subjective values (on the y-axis), the more extreme (more
 positive/negative) the objective outcomes get. This is the most common
-form observed in empirical data when fitting the $`\alpha`$ parameter to
+form observed in empirical data when fitting the $\alpha$ parameter to
 the observed choices (see below).
 
 #### Probability weighting function
 
-The weighting function takes a probability $`p_i`$ between $`0`$ and
-$`1`$ as input and returns a *transformed* probability (a decision
-weight) $`w(p_i)`$ as output, according to:
+The weighting function takes a probability $p_i$ between $0$ and $1$ as
+input and returns a *transformed* probability (a decision weight)
+$w(p_i)$ as output, according to:
 
-``` math
-
+$$
 w(p_i) = \frac{\delta p_i^\gamma}{\delta p_i^\gamma + (1-p_i)^\gamma} \; ,
-```
-where $`\gamma`$ is a number that usually takes values between $`0`$ and
-$`2`$ and $`\delta`$ is a number that usually takes values between $`0`$
-and $`5`$.
+$$ where $\gamma$ is a number that usually takes values between $0$ and
+$2$ and $\delta$ is a number that usually takes values between $0$ and
+$5$.
 
 The figure below illustrates the form of this transformation when
-$`\gamma = .5`$, $`\gamma = .1`$ or $`\gamma = 1.5`$ (line colors), and
-when $`\delta = .4`$, $`\delta = 1.2`$ or $`\delta=2`$ (different plot
-facets).
+$\gamma = .5$, $\gamma = .1$ or $\gamma = 1.5$ (line colors), and when
+$\delta = .4$, $\delta = 1.2$ or $\delta=2$ (different plot facets).
 
 ``` r
 wf <- expand_grid(p = c(seq(0, 1, .01)) , 
@@ -590,54 +580,50 @@ wf %>% ggplot(aes(p, w, group = as.factor(gamma), color = as.factor(gamma))) +
 
 ![](bayesian_cognitive_modeling_files/figure-gfm/weighting-function-demo-1.png)<!-- -->
 
-It can be seen that in the case of $`\gamma = \delta =  1`$ (green line,
-middle panel), all decision weights $`w(p)`$ are equal to the objective
-probabilities $`p`$. However, when $`\gamma \neq 1`$ and/or
-$`\delta \neq 1`$, the function gets curved, indicating a nonlinear
-transformation of probabilities.
+It can be seen that in the case of $\gamma = \delta =  1$ (green line,
+middle panel), all decision weights $w(p)$ are equal to the objective
+probabilities $p$. However, when $\gamma \neq 1$ and/or $\delta \neq 1$,
+the function gets curved, indicating a nonlinear transformation of
+probabilities.
 
 The exact form of the transformation depends on the combination of
-$`\gamma`$ and $`\delta`$. Generally, the function takes an inverse
-S-shape when $`\gamma < 1`$ (red line), but an S-shape when
-$`\gamma > 1`$ (red line). $`\gamma`$ is therefore often referred to as
-the curvature parameter and reflects probability sensitivity - how
-accurately objective probabilities are represented. When $`\delta = 1`$,
-the function intersects the diagonal at the probability midpoint
-$`p=.5`$. The function is more elevated (runs above the diagonal most of
-the time) when $`\delta > 1`$, but less elevated (runs below the
-diagonal most of the time) when $`\delta < 1`$. Consequently, $`\delta`$
-is the *elevation parameter* and is sometimes psychologically
-interpreted as optimism or pessimism.
+$\gamma$ and $\delta$. Generally, the function takes an inverse S-shape
+when $\gamma < 1$ (red line), but an S-shape when $\gamma > 1$ (blue
+line). $\gamma$ is therefore often referred to as the curvature
+parameter and reflects probability sensitivity - how accurately
+objective probabilities are represented. When $\delta = 1$, the function
+intersects the diagonal at the probability midpoint $p=.5$. The function
+is more elevated (runs above the diagonal most of the time) when
+$\delta > 1$, but less elevated (runs below the diagonal most of the
+time) when $\delta < 1$. Consequently, $\delta$ is the *elevation
+parameter* and is sometimes psychologically interpreted as optimism or
+pessimism.
 
 In CPT, the transformations of the probability weighting function are
-used to derive the decisions weights $`\pi`$. However, in some
+used to derive the decisions weights $\pi$. However, in some
 applications, the function might differ depending on whether a lottery
 contains losses or gains (more on that later).
 
 When each option has at most two different outcomes that are all in the
 gain domain, the decisions weights are derived according to:
 
-``` math
-
+$$
 \begin{align}
 \pi_{high}^+ &= w(p_{high}) \\
 \pi_{low}^+ &= 1 - \pi_{high}^+ 
 \end{align}
-```
-When each option has at most two different outcomes that are all in the
-loss domain, the decisions weights are derived according to:
+$$ When each option has at most two different outcomes that are all in
+the loss domain, the decisions weights are derived according to:
 
-``` math
-
+$$
 \begin{align}
 \pi_{low}^- &= w(p_{low}) \\
 \pi_{high}^- &= 1 - \pi_{low}^+ 
 \end{align}
-```
-The subjective values and decision weights that are obtained via these
-two transformations are then used to compute the subjective valuations
-of each option. Similar to EV maximization, it is assumed that the
-option with the highest valuation is chosen.
+$$ The subjective values and decision weights that are obtained via
+these two transformations are then used to compute the subjective
+valuations of each option. Similar to EV maximization, it is assumed
+that the option with the highest valuation is chosen.
 
 Here, we first rank-order the outcomes and their probabilities according
 to the magnitude of the outcomes.
@@ -834,18 +820,16 @@ values in a rather unsystematic way. Hence, it is likely that another
 combination of parameters might yield a better prediction.
 
 But how to find the best fitting combination of parameter values
-$`\Theta`$ for our model? In other words, how do we get from our initial
+$\Theta$ for our model? In other words, how do we get from our initial
 beliefs about the plausibility of the parameter values,
-$`p(\Theta) = p(\alpha, \lambda, \gamma, \delta)`$, (before having seen
+$p(\Theta) = p(\alpha, \lambda, \gamma, \delta)$, (before having seen
 the data), to updated “beliefs” about the parameters values after having
-seen the data $`p(\Theta|D)`$?
+seen the data $p(\Theta|D)$?
 
-``` math
-
+$$
 p(\Theta) \to p(\Theta|D) \; \text{?}
-```
-Here is the intuition behind the solution for this updating problem from
-a *Bayesian* perspective:
+$$ Here is the intuition behind the solution for this updating problem
+from a *Bayesian* perspective:
 
 1.  Take a set of parameter values for the parameters in your model
 2.  Calculate the probability of the data given these parameter values
@@ -857,12 +841,10 @@ The product we obtain from Step 3 (i.e., the multiplication of prior and
 likelihood) gives us the updated probability of the respective parameter
 values given the data. This is called the *posterior probability*:
 
-``` math
-
+$$
 p(\Theta|D) \propto p(\Theta) p(D|\Theta)
-```
-If we do these steps for all possible combinations of parameter values,
-we can take the parameter values that have the biggest posterior
+$$ If we do these steps for all possible combinations of parameter
+values, we can take the parameter values that have the biggest posterior
 probability given the data. Before demonstrating how we can compute
 these posteriors for our CPT model using `R` and a simulation program
 called `JAGS`, we explain the different parts of this Bayesian updating
@@ -870,7 +852,7 @@ process in more detail.
 
 #### Prior
 
-The prior probability, $`p(\Theta)`$ expresses our initial beliefs about
+The prior probability, $p(\Theta)$ expresses our initial beliefs about
 the plausibility of different parameter values. For example, before
 testing if a coin (or dice) is biased, you would probably have a prior
 belief that the coin has a .50 probability of landing on each side (or a
@@ -896,14 +878,14 @@ of parameter values.
 To illustrate, a much simpler model than CPT for the risky choice
 problems from Kellen et al. (2016) would be a binomial model which
 predicts the choice of `Option 1` over `Option 2` with a constant
-probability $`\theta`$. That is, when $`\theta=1`$, it always predicts
+probability $\theta$. That is, when $\theta=1$, it always predicts
 choosing `Option 1`. As a consequence, when someone chooses `Option 2`,
-the probability of this choice given our model would be $`0`$. In
-contrast, if instead $`\theta=.3`$, the probability of someone choosing
-`Option 2` would be instead $`.7`$. In other words, the observed choice
-of `Option B` is more likely when $`\theta = .3`$ than when
-$`\theta=1`$. Such a model of course disregards any attributes (outcome
-values and probabilities) of a given choice problem.
+the probability of this choice given our model would be $0$. In
+contrast, if instead $\theta=.3$, the probability of someone choosing
+`Option 2` would be instead $.7$. In other words, the observed choice of
+`Option B` is more likely when $\theta = .3$ than when $\theta=1$. Such
+a model of course disregards any attributes (outcome values and
+probabilities) of a given choice problem.
 
 ``` r
 # theta=1
@@ -924,7 +906,7 @@ dbinom(B_choice,1,prob=theta)
     ## [1] 0.7
 
 We can now extend this example to more choices and more candidate values
-for $`\theta`$. Note that the likelihood for multiple choices is simply
+for $\theta$. Note that the likelihood for multiple choices is simply
 the product of all choices’ individual likelihoods, assuming that the
 choices are independent. In the following example, we take the candidate
 values \$=\$0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 and
@@ -974,19 +956,19 @@ on this simple binomial decision model.
 
 Although CPT is a more complex model than the simple binomial from
 above, the idea is exactly the same. We have a number of free (unknown)
-parameters that we want to learn about ($`\theta`$ for the binomial;
-$`\alpha, \lambda,\gamma,\delta`$ for CPT as outlined above) and the
+parameters that we want to learn about ($\theta$ for the binomial;
+$\alpha, \lambda,\gamma,\delta$ for CPT as outlined above) and the
 probability of observed choices depends on the values of these
 parameters. The main difference between the binomial and CPT is that the
 binomial simply assumes a constant probability for choosing `Option 1`
-vs. `Option 2` for all choice problems (that is $`\theta`$), independent
+vs. `Option 2` for all choice problems (that is $\theta$), independent
 of characteristics of the choice problems, whereas CPT uses
 (transformations of) the outcomes and their probabilities in a choice
 problem to compute a choice probability that is specific for this
 problem.
 
 So far, CPT can only make deterministic predictions (e.g., always choose
-`Option A` when $`V_A > V_B`$). Assuming a probabilistic world, where
+`Option A` when $V_A > V_B$). Assuming a probabilistic world, where
 people mostly choose according to their overall preference, but may
 sometimes also act differently depending on context (e.g., peer pressure
 or other factors), we need to make one more adjustment to CPT to make it
@@ -997,7 +979,7 @@ and 1.
 In this adjustment, we use a choice rule, which predicts a higher
 probability for choosing an option the higher the *difference between
 the two option’s valuations* is (e.g., higher probability for choosing
-`Option A` the better its CPT score $`V_A`$ is compared to the score for
+`Option A` the better its CPT score $V_A$ is compared to the score for
 `Option B`). That is, in contrast to the deterministic version, the
 prediction does not only depend on *if* `Option A` obtains a better
 evaluation than `Option B` (or a worse one), but also on *how much*
@@ -1005,27 +987,25 @@ better (or *how much* worse) this evaluation is. If the evaluation is
 much better, it is highly likely that `Option A` is chosen, if it is
 much worse, it is instead highly likely that `Option B` is chosen. If
 their evaluations are similar however, the choice probability gets
-closer to $`.5`$, indicating that a person might be indifferent between
+closer to $.5$, indicating that a person might be indifferent between
 the two choice options. This logic is implemented in the so-called
 *logit choice rule*, which takes the CPT valuations as input and returns
-a choice probability as output:
-``` math
-
+a choice probability as output: $$
 p(A) = \frac{1}{1+e^{-\phi(V_A-V_B)}} \: , 
-```
+$$
 
-where $`\phi`$ is a number that can take values $`\geq0`$ (free
-parameter). The figure below illustrates how the logit choice rule
-translates differences in the CPT valuations (x-axis) into a choice
-probability that is constrained between 0 and 1 (y-axis). In general,
-when the difference in valuations is 0, the choice probability is .5.
-This reflects the case that when the options do not really differ, we
-also have no intuitive preference for one option or the other. Then,
-when the difference in valuations becomes positive, the probability for
-choosing `Option A` *increases*; and when the difference becomes
-negative, the probability for choosing `Option A` *decreases*. As can be
-seen, $`\phi`$ affects how strongly the choice probability is influenced
-by the difference magnitude between the option’s valuations.
+where $\phi$ is a number that can take values $\geq0$ (free parameter).
+The figure below illustrates how the logit choice rule translates
+differences in the CPT valuations (x-axis) into a choice probability
+that is constrained between 0 and 1 (y-axis). In general, when the
+difference in valuations is 0, the choice probability is .5. This
+reflects the case that when the options do not really differ, we also
+have no intuitive preference for one option or the other. Then, when the
+difference in valuations becomes positive, the probability for choosing
+`Option A` *increases*; and when the difference becomes negative, the
+probability for choosing `Option A` *decreases*. As can be seen, $\phi$
+affects how strongly the choice probability is influenced by the
+difference magnitude between the option’s valuations.
 
 ``` r
 logit <- expand_grid(Diff = c(seq(-4, 4, .01)) , 
@@ -1051,10 +1031,9 @@ distribution in the end, where all individual products (posterior
 probabilities) sum up to 1. To achieve this, we need to divide each
 individual product by the sum of all products,
 
-``` math
-
+$$
 p(\Theta|D) = \frac{p(\Theta) p(D|\Theta)}{ \int p(\Theta) p(D|\Theta) d\Theta} \; ,
-```
+$$
 
 where the new denominator is the *marginal likelihood*. The primary
 function of the marginal likelihood is to ensures that all posterior
@@ -1065,7 +1044,7 @@ probability of the data given the model.)
 
 While the integral is just the proper way of summing over the continuous
 parameter values, it is often difficult or impossible to be solved
-analytically. (Remember that $`\Theta`$ usually contains multiple
+analytically. (Remember that $\Theta$ usually contains multiple
 parameters over which we need to integrate, leading to a
 high-dimensional integral with no closed-form solution.) However,
 obtaining a proper probability distribution and doing Bayesian inference
@@ -1103,7 +1082,7 @@ almost no implausible values.
     posterior is larger than that of the initial values.
 5.  Otherwise accept/deny the proposals with a probability that is
     proportional to the ratio of the posteriors
-    $`\frac{posterior(proposal)}{posterior(initial)}`$.
+    $\frac{posterior(proposal)}{posterior(initial)}$.
 6.  Repeat this procedure many times by comparing the last accepted
     values against new proposal values, which are generated by adding a
     random perturbation to these accepted values.
@@ -1287,8 +1266,8 @@ earlier. Notably, there are three different sections in which the
 formulae are repeated (more or less): One section for pure Gain
 problems, one for pure Loss problems, and one for Mixed problem. The
 reason for this is that you may have different parameters for the
-different domains: for example, $`\lambda`$ is only reflected in the
-value function formula in the loss domain:
+different domains: for example, $\lambda$ is only reflected in the value
+function formula in the loss domain:
 
     v.hA[i,j] <- lambda[j]*(-1) * pow((-1*hA[i]),alpha[j])
     v.lA[i,j] <- lambda[j]*(-1) * pow((-1*lA[i]),alpha[j])
@@ -1432,12 +1411,14 @@ RDS file with the samples from when we fitted the model.
 
 ``` r
 # if RDS file exists, load existing fits 
-if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds"))){
-  samples <- readRDS(here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds")) 
+if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model.RData"))){
+  load(here("BayesianCognitiveModeling", "modelfits", "cpt_model.RData")) 
   print(paste("model loaded"))
   
 # if RDS file doesn't exist, rerun fits:
 } else {
+  
+time_start = lubridate::now() # save start time of modelfitting
 
 ## sample from posterior distributions using MCMC
 samples <- jags.parallel(data = data , # empirical data
@@ -1452,24 +1433,81 @@ samples <- jags.parallel(data = data , # empirical data
                    DIC = TRUE , 
                    jags.seed = 1223) # seed to enable reproducibility
 
-saveRDS(samples, here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
-print(paste("done fitting model to data"))
+time_end = lubridate::now() # save when model fit was done
+
+print(paste0("Done fitting the model. The model fitted for: ", lubridate::as.duration(time_end-time_start))) # Prints how long the model fitted
+
+save(samples, file = here("BayesianCognitiveModeling", "modelfits", "cpt_model.RData")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
+
 }
 ```
 
     ## [1] "model loaded"
 
-Let’s inspect the `samples` object. All single samples are recorded in
-the `sims.list`of the `BUGSoutput` element of the `samples` object. For
-example, all ((2000 iterations - 1000 burnin samples) \* 6 chains =
-6000) samples for each of the (104) individual $`\alpha`$ parameters are
-saved here:
+Let’s inspect the `samples` object. Here, it is documented what model
+was run, and which parameters were tracked.
+
+``` r
+paste("Model run:")
+```
+
+    ## [1] "Model run:"
+
+``` r
+samples$model.file
+```
+
+    ## [1] "/Volumes/go29vuc/TUM Promotion_cloud/03_teaching/03_tutorials/CPT_tutorial/BayesianCognitiveModeling/JAGS_models/JAGS_cpt_model_individual.txt"
+
+``` r
+paste("Parameters tracked:")
+```
+
+    ## [1] "Parameters tracked:"
+
+``` r
+samples$parameters.to.save 
+```
+
+    ## [1] "alpha"  "lambda" "gamma"  "delta"  "rho"
+
+In the first entries of the BUGSoutput, you can check what settings
+(number of iterations, thinning etc.) were used to fit the model. For
+example, to double-check if the model you loaded was indeed the correct
+one.
+
+``` r
+head(samples$BUGSoutput)
+```
+
+    ## $n.chains
+    ## [1] 6
+    ## 
+    ## $n.iter
+    ## [1] 2000
+    ## 
+    ## $n.burnin
+    ## [1] 1000
+    ## 
+    ## $n.thin
+    ## [1] 2
+    ## 
+    ## $n.keep
+    ## [1] 500
+    ## 
+    ## $n.sims
+    ## [1] 3000
+
+All single samples are recorded in the `sims.list`of the `BUGSoutput`
+element of the `samples` object. For example, all ((2000 iterations -
+1000 burnin samples / 2 thinning) \* 6 chains = 3000) samples for each
+of the (104) individual $\alpha$ parameters are saved here:
 
 ``` r
 str(samples[["BUGSoutput"]][["sims.list"]][["alpha"]])
 ```
 
-    ##  num [1:3000, 1:104] 0.264 0.427 0.135 0.201 0.25 ...
+    ##  num [1:3000, 1:104] 0.272 0.58 0.253 0.225 0.339 ...
 
 The mean or median for each parameter (a point estimate for each
 participant’s parameter) is also saved explicitly:
@@ -1545,7 +1583,6 @@ distributions of some parameters specifically, you can plot them using
 commands from the bayesplot package:
 
 ``` r
-# install.packages("bayesplot")
 bayesplot::mcmc_dens(samples$BUGSoutput$sims.array, pars = "alpha[1]") + theme_classic()
 ```
 
@@ -1598,8 +1635,6 @@ bayesplot::mcmc_trace(
 One possible way to improve convergence would be to use longer chains
 (more iterations per chain).
 
-\*\* POTENTIALLY EXPAND ON BUGSOUTPUT HERE \*\*
-
 Now that we have our individual parameter estimates, let’s plot the
 value and weighting function and we see the typical patterns of value
 und probability distortion that were predicted by CPT. To do so, we call
@@ -1609,7 +1644,7 @@ case it has a different name. First, we plot the value function:
 
 ``` r
 source(here("BayesianCognitiveModeling","helper_functions", "CPT_plotting.R")) # calls functions for plotting
-v_fun_TK92(samples = samples)
+vf_TK92(samples = samples)
 ```
 
 ![](bayesian_cognitive_modeling_files/figure-gfm/value-function-ind-1.png)<!-- -->
@@ -1621,7 +1656,7 @@ CPT.
 Next, we plot the probability weighting function:
 
 ``` r
-w_fun_GE87(samples = samples)
+wf_GE87(samples = samples)
 ```
 
 ![](bayesian_cognitive_modeling_files/figure-gfm/weighting-function-ind-1.png)<!-- -->
@@ -1972,11 +2007,37 @@ now want to fit the original weighting function proposed by Tversky and
 Kahneman (1992), which has only one parameter, the gamma parameter, but
 no elevation parameter delta.
 
+As you saw in the model code, this weighting function is specified as:
+
+$$
+w(p_i) = \frac{p_i^\gamma}{(p_i^\gamma + (1-p_i)^\gamma)^(\frac{1}{\gamma})} \; ,
+$$
+
+The figure below illustrates the form of this functional form when
+$\gamma = .5$, $\gamma = .1$ or $\gamma = 1.5$ (line colors), where for
+values of $\gamma < 1$ we see an overweighting of small probabilities
+but underweighting of likely events, and the reverse for values
+$\gamma > 1$.
+
+``` r
+wf <- expand_grid(p = c(seq(0, 1, .01)) , 
+                  gamma = c(.5, 1, 1.5) ) %>%
+  mutate(w = ( (p^gamma) ) / (  ((p^gamma) + (1-p)^gamma )^(1/gamma )))
+
+
+wf %>% ggplot(aes(p, w, group = as.factor(gamma), color = as.factor(gamma))) +
+  geom_abline(slope=1, linetype='dashed', linewidth = 1, color = 'gray') +
+  geom_line(linewidth = 1) + 
+  theme_minimal()
+```
+
+![](bayesian_cognitive_modeling_files/figure-gfm/weighting-function-tk-1.png)<!-- -->
+
 Note also the data structure that the model expects: whereas our first
 model accessed cumulative probabilities fromm one-dimensional objects
 like `p_hA[i]`, now we use three-dimensional objects `cumprobsA[i,1,j]`
 that contain all cumulative probabilities from one option for all
-participants $`j`$ and all problems $`i`$.
+participants $j$ and all problems $i$.
 
 #### Hierarchical modeling
 
@@ -2065,7 +2126,7 @@ reflected in the following part of the model:
 
 You see that setting priors for the group-level parameters works in a
 very similar way. For example, Group-level means are drawn from normal
-distributions with $`M=0`$ and $`SD=1`$, whereas Group-level variance
+distributions with $M=0$ and $SD=1$, whereas Group-level variance
 parameters (e.g., `sigma.phi.alpha`) are drawn from uniform
 distributions. Group-level variance parameters are then transformed into
 precision values (e.g., `tau.phi.alpha`).
@@ -2268,14 +2329,16 @@ myinits <- list(oneinits)
 And then we run our hierarchical model through JAGS.
 
 ``` r
-# if RDS file exists, load existing fits 
-if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.rds"))){
-  samples.exp <- readRDS(file = here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.rds")) 
+# if modelfit file exists, load existing fits 
+if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.RData"))){
+  load(here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.RData")) 
   print(paste("model loaded"))
   
-# if RDS file doesn't exist, rerun fits:
+# if modelfit file doesn't exist, rerun fits:
 } else {
 
+  time_start = lubridate::now() # save start time of modelfitting
+  
 #Run JAGS using R2jags
 samples.exp <- jags.parallel(data = data, # empirical data
                              inits = myinits, # initial values for parameters in each chain
@@ -2289,8 +2352,11 @@ samples.exp <- jags.parallel(data = data, # empirical data
                              jags.seed = 2024,
                              DIC=T)
 
-saveRDS(samples.exp, here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.rds")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
-print(paste("done fitting model to data"))
+time_end = lubridate::now() # save when model fit was done
+
+print(paste0("Done fitting the model. The model fitted for: ", lubridate::as.duration(time_end-time_start))) # Prints how long the model fitted
+
+save(samples.exp, file = here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.RData")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
 }
 ```
 
@@ -2333,7 +2399,10 @@ Using our plotting commands, you can now plot the individual and
 group-level value function at once:
 
 ``` r
-v_fun_TK92(samples = samples.exp, color = "red")
+vf_TK92(samples = samples.exp, 
+        color = "red",
+        alpha_mean = "mu.alpha",
+        alpha_subj = "alpha")
 ```
 
 ![](bayesian_cognitive_modeling_files/figure-gfm/value-function-hierarchical-1.png)<!-- -->
@@ -2341,7 +2410,10 @@ v_fun_TK92(samples = samples.exp, color = "red")
 And similarly for the probability weighting function.
 
 ``` r
-w_fun_TK92(samples = samples.exp, color = "red")
+wf_TK92(samples = samples.exp, 
+        color = "red",
+        gamma_mean = "mu.gamma",
+        gamma_subj = "gamma")
 ```
 
 ![](bayesian_cognitive_modeling_files/figure-gfm/weighting-function-hierarchical-1.png)<!-- -->

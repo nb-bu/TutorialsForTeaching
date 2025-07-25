@@ -13,7 +13,12 @@ pacman::p_load(readxl ,
                magrittr , 
                knitr, 
                here , 
-               R2jags
+               R2jags ,
+               lubridate,
+               bayesplot,
+               grid,
+               gridExtra,
+               gridGraphics
                )
 
 set.seed(1) # setting seed to make random samples reproducible
@@ -285,7 +290,7 @@ It can be seen that in the case of $\gamma = \delta =  1$ (green line, middle pa
 However, when $\gamma \neq 1$ and/or $\delta \neq 1$, the function gets curved, indicating a nonlinear transformation of probabilities.  
 
 The exact form of the transformation depends on the combination of $\gamma$ and $\delta$. 
-Generally, the function takes an inverse S-shape when  $\gamma < 1$ (red line), but an S-shape when $\gamma > 1$ (red line). 
+Generally, the function takes an inverse S-shape when  $\gamma < 1$ (red line), but an S-shape when $\gamma > 1$ (blue line). 
 $\gamma$ is therefore often referred to as the curvature parameter and reflects probability sensitivity - how accurately objective probabilities are represented.
 When $\delta = 1$, the function intersects the diagonal at the probability midpoint $p=.5$. The function is more elevated (runs above the diagonal most of the time) when $\delta > 1$, but less elevated (runs below the diagonal most of the time) when $\delta < 1$. Consequently, $\delta$ is the *elevation parameter* and is sometimes psychologically interpreted as optimism or pessimism.  
 
@@ -902,14 +907,14 @@ Since it can take a while to fit the model, here you can also load the RDS file 
 ```{r }
 
 # if RDS file exists, load existing fits 
-if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds"))){
-  samples <- readRDS(here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds")) 
+if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model.RData"))){
+  load(here("BayesianCognitiveModeling", "modelfits", "cpt_model.RData")) 
   print(paste("model loaded"))
   
 # if RDS file doesn't exist, rerun fits:
 } else {
   
-time_start = lubridate::now()
+time_start = lubridate::now() # save start time of modelfitting
 
 ## sample from posterior distributions using MCMC
 samples <- jags.parallel(data = data , # empirical data
@@ -924,15 +929,38 @@ samples <- jags.parallel(data = data , # empirical data
                    DIC = TRUE , 
                    jags.seed = 1223) # seed to enable reproducibility
 
-saveRDS(samples, here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
-print(paste("done fitting model to data"))
+time_end = lubridate::now() # save when model fit was done
+
+print(paste0("Done fitting the model. The model fitted for: ", lubridate::as.duration(time_end-time_start))) # Prints how long the model fitted
+
+save(samples, file = here("BayesianCognitiveModeling", "modelfits", "cpt_model.RData")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
+
 }
 
 
 ```
 
 
-Let's inspect the `samples` object. All single samples are recorded in the `sims.list`of the `BUGSoutput` element of the `samples` object. For example, all ((2000 iterations - 1000 burnin samples) * 6 chains = 6000) samples for each of the (104) individual $\alpha$ parameters are saved here:
+Let's inspect the `samples` object. Here, it is documented what model was run, and which parameters were tracked.
+
+```{r}
+paste("Model run:")
+samples$model.file
+
+paste("Parameters tracked:")
+samples$parameters.to.save 
+```
+
+
+In the first entries of the BUGSoutput, you can check what settings (number of iterations, thinning etc.) were used to fit the model. For example, to double-check if the model you loaded was indeed the correct one.
+
+```{r}
+head(samples$BUGSoutput)
+```
+
+
+
+All single samples are recorded in the `sims.list`of the `BUGSoutput` element of the `samples` object. For example, all ((2000 iterations - 1000 burnin samples / 2 thinning) * 6 chains = 3000) samples for each of the (104) individual $\alpha$ parameters are saved here:
 
 ```{r}
 
@@ -961,7 +989,6 @@ kable(head(samples$BUGSoutput$summary))
 Here, we see for every individual parameter the `mean` (as we just looked at them right before), but also the credibility intervals of the posterior distribution. If you want to look at the posterior distributions of some parameters specifically, you can plot them using commands from the bayesplot package:
 
 ```{r posterior-plot}
-# install.packages("bayesplot")
 bayesplot::mcmc_dens(samples$BUGSoutput$sims.array, pars = "alpha[1]") + theme_classic()
 ```
 
@@ -989,14 +1016,12 @@ bayesplot::mcmc_trace(
 
 One possible way to improve convergence would be to use longer chains (more iterations per chain).
 
-** POTENTIALLY EXPAND ON BUGSOUTPUT HERE **
-
 Now that we have our individual parameter estimates, let's plot the value and weighting function and we see the typical patterns of value und probability distortion that were predicted by CPT. To do so, we call a helper function that we have written for you in a seperate script. You have to provide the samples object returned by JAGS as an argument in case it has a different name. First, we plot the value function:
 
 
 ```{r value-function-ind}
 source(here("BayesianCognitiveModeling","helper_functions", "CPT_plotting.R")) # calls functions for plotting
-v_fun_TK92(samples = samples)
+vf_TK92(samples = samples)
 
 ```
 
@@ -1006,7 +1031,7 @@ Next, we plot the probability weighting function:
 
 
 ```{r weighting-function-ind}
-w_fun_GE87(samples = samples)
+wf_GE87(samples = samples)
 ```
 
 ... and again we see that even though there is some interindividual variability, all participants show the distortion of objective probabilities as predicted by CPT.
@@ -1269,6 +1294,35 @@ Why did we make that change? Whereas the general idea of CPT stays the same - as
 For now, just note that the weighting function we used in our first model `JAGS_cpt_model_individual.txt` is one of the most commonly used forms, it has two parameters (gamma and delta) and was proposed by Goldstein and Einhorn (1987).     
 In our second model `JAGS_cpt_model_hierarchical_TK92-onedomain.txt`, we now want to fit the original weighting function proposed by Tversky and Kahneman (1992), which has only one parameter, the gamma parameter, but no elevation parameter delta.
 
+
+
+
+
+
+As you saw in the model code, this weighting function is specified as:
+
+$$
+w(p_i) = \frac{p_i^\gamma}{(p_i^\gamma + (1-p_i)^\gamma)^(\frac{1}{\gamma})} \; ,
+$$
+
+The figure below illustrates the form of this functional form when $\gamma = .5$, $\gamma = .1$ or $\gamma = 1.5$ (line colors), where for values of $\gamma < 1$ we see an overweighting of small probabilities but underweighting of likely events, and the reverse for values $\gamma > 1$.
+
+```{r weighting-function-tk}
+#| fig-width: 3
+#| fig-height: 3
+
+wf <- expand_grid(p = c(seq(0, 1, .01)) , 
+                  gamma = c(.5, 1, 1.5) ) %>%
+  mutate(w = ( (p^gamma) ) / (  ((p^gamma) + (1-p)^gamma )^(1/gamma )))
+
+
+wf %>% ggplot(aes(p, w, group = as.factor(gamma), color = as.factor(gamma))) +
+  geom_abline(slope=1, linetype='dashed', linewidth = 1, color = 'gray') +
+  geom_line(linewidth = 1) + 
+  theme_minimal()
+```
+
+
 Note also the data structure that the model expects: whereas our first model accessed cumulative probabilities fromm one-dimensional objects like `p_hA[i]`, now we use three-dimensional objects `cumprobsA[i,1,j]` that contain all cumulative probabilities from one option for all participants $j$ and all problems $i$.
 
 
@@ -1511,14 +1565,16 @@ myinits <- list(oneinits)
 And then we run our hierarchical model through JAGS. 
 
 ```{r}
-# if RDS file exists, load existing fits 
-if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.rds"))){
-  samples.exp <- readRDS(file = here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.rds")) 
+# if modelfit file exists, load existing fits 
+if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.RData"))){
+  load(here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.RData")) 
   print(paste("model loaded"))
   
-# if RDS file doesn't exist, rerun fits:
+# if modelfit file doesn't exist, rerun fits:
 } else {
 
+  time_start = lubridate::now() # save start time of modelfitting
+  
 #Run JAGS using R2jags
 samples.exp <- jags.parallel(data = data, # empirical data
                              inits = myinits, # initial values for parameters in each chain
@@ -1532,9 +1588,13 @@ samples.exp <- jags.parallel(data = data, # empirical data
                              jags.seed = 2024,
                              DIC=T)
 
-saveRDS(samples.exp, here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.rds")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
-print(paste("done fitting model to data"))
+time_end = lubridate::now() # save when model fit was done
+
+print(paste0("Done fitting the model. The model fitted for: ", lubridate::as.duration(time_end-time_start))) # Prints how long the model fitted
+
+save(samples.exp, file = here("BayesianCognitiveModeling", "modelfits", "cpt_model_hierarchical.RData")) # once the model is done fitting, we first save the samples to make sure they don't get lost.
 }
+
 
 ```
 
@@ -1557,13 +1617,19 @@ samples.exp$BUGSoutput$summary %>%
 Using our plotting commands, you can now plot the individual and group-level value function at once:
 
 ```{r value-function-hierarchical}
-v_fun_TK92(samples = samples.exp, color = "red")
+vf_TK92(samples = samples.exp, 
+        color = "red",
+        alpha_mean = "mu.alpha",
+        alpha_subj = "alpha")
 ```
 
 And similarly for the probability weighting function. 
 
 ```{r weighting-function-hierarchical}
-w_fun_TK92(samples = samples.exp, color = "red")
+wf_TK92(samples = samples.exp, 
+        color = "red",
+        gamma_mean = "mu.gamma",
+        gamma_subj = "gamma")
 ```
 
 ## Appendix: Debugging JAGS errors
