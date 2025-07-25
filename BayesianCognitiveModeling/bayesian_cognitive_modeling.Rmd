@@ -908,6 +908,8 @@ if(file.exists(here("BayesianCognitiveModeling", "modelfits", "cpt_model.rds")))
   
 # if RDS file doesn't exist, rerun fits:
 } else {
+  
+time_start = lubridate::now()
 
 ## sample from posterior distributions using MCMC
 samples <- jags.parallel(data = data , # empirical data
