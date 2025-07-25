@@ -944,10 +944,8 @@ save(samples, file = here("BayesianCognitiveModeling", "modelfits", "cpt_model.R
 Let's inspect the `samples` object. Here, it is documented what model was run, and which parameters were tracked.
 
 ```{r}
-paste("Model run:")
-samples$model.file
 
-paste("Parameters tracked:")
+samples$model.file
 samples$parameters.to.save 
 ```
 
@@ -1308,8 +1306,8 @@ $$
 The figure below illustrates the form of this functional form when $\gamma = .5$, $\gamma = .1$ or $\gamma = 1.5$ (line colors), where for values of $\gamma < 1$ we see an overweighting of small probabilities but underweighting of likely events, and the reverse for values $\gamma > 1$.
 
 ```{r weighting-function-tk}
-#| fig-width: 3
-#| fig-height: 3
+#| fig-height: 5
+#| fig-width: 5
 
 wf <- expand_grid(p = c(seq(0, 1, .01)) , 
                   gamma = c(.5, 1, 1.5) ) %>%

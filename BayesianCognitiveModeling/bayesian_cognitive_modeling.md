@@ -1448,22 +1448,10 @@ Let’s inspect the `samples` object. Here, it is documented what model
 was run, and which parameters were tracked.
 
 ``` r
-paste("Model run:")
-```
-
-    ## [1] "Model run:"
-
-``` r
 samples$model.file
 ```
 
     ## [1] "/Volumes/go29vuc/TUM Promotion_cloud/03_teaching/03_tutorials/CPT_tutorial/BayesianCognitiveModeling/JAGS_models/JAGS_cpt_model_individual.txt"
-
-``` r
-paste("Parameters tracked:")
-```
-
-    ## [1] "Parameters tracked:"
 
 ``` r
 samples$parameters.to.save 
